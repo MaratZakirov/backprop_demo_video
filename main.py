@@ -44,14 +44,14 @@ class FFForwardPass(Scene):
         label_bottom = MathTypst(r"W_(p,j)", font_size=36, color=YELLOW).next_to(arrow_bottom, RIGHT, buff=0.2)
 
         # 5. Плавная пошаговая анимация сборки схемы
-        self.play(Create(box), Write(box_label), run_time=1.2)
+        self.play(Create(box), Write(box_label), run_time=2.2)
         self.play(
             GrowArrow(arrow_in), Write(label_in),
             GrowArrow(arrow_bottom), Write(label_bottom),
-            run_time=1.2
+            run_time=2.2
         )
-        self.play(GrowArrow(arrow_out), Write(label_out), run_time=1.0)
-        self.wait(2)
+        self.play(GrowArrow(arrow_out), Write(label_out), run_time=2.0)
+        self.wait(15)
 
 class FFBackwardPass(Scene):
     def construct(self):
@@ -97,14 +97,14 @@ class FFBackwardPass(Scene):
         label_bottom = MathTypst(r"frac(partial L, partial W_(p,j))", font_size=34, color=YELLOW).next_to(arrow_bottom, RIGHT, buff=0.2)
 
         # 5. Плавная сборка по ходу обратного распространения ошибки (справа -> налево и вниз)
-        self.play(Create(box), Write(box_label), run_time=1.2)
-        self.play(GrowArrow(arrow_right), Write(label_right), run_time=1.0)
+        self.play(Create(box), Write(box_label), run_time=2.2)
+        self.play(GrowArrow(arrow_right), Write(label_right), run_time=2.0)
         self.play(
             GrowArrow(arrow_left), Write(label_left),
             GrowArrow(arrow_bottom), Write(label_bottom),
-            run_time=1.2
+            run_time=2.2
         )
-        self.wait(2)
+        self.wait(15)
 
 class LinearLayerDerivation(Scene):
   def animate_derivation_block(
@@ -136,7 +136,7 @@ class LinearLayerDerivation(Scene):
           prev_copy.animate.scale(0.75)
           .set_opacity(0.65)
           .move_to(UP * target_y),
-          run_time=1.1,
+          run_time=1.5,
       )
 
       # Плавно трансформируем центральную формулу в следующий шаг вывода
@@ -145,14 +145,14 @@ class LinearLayerDerivation(Scene):
       )
       self.play(ReplacementTransform(current_eq, next_eq), run_time=1.1)
       current_eq = next_eq
-      self.wait(1.0)
+      self.wait(5.5)
 
     # Подсвечиваем финальную формулу рамкой
     final_box = SurroundingRectangle(
         current_eq, color=GREEN, buff=0.2, corner_radius=0.1
     )
     self.play(Create(final_box), run_time=0.8)
-    self.wait(3.8)
+    self.wait(10.0)
 
     # Очищаем экран перед следующим разделом
     self.play(FadeOut(VGroup(header, history, current_eq, final_box)), run_time=0.7)
@@ -194,14 +194,13 @@ class LinearLayerDerivation(Scene):
     )
 
 if __name__ == "__main__":
-    with tempconfig({"quality": "low_quality", "preview": True}):
-        scene = FFForwardPass()
-        scene.render()
+  cfg = {"quality": "high_quality", "preview": False}
 
-    with tempconfig({"quality": "low_quality", "preview": True}):
-        scene = FFBackwardPass()
-        scene.render()
+  with tempconfig(cfg):
+      FFForwardPass().render()
 
-    with tempconfig({"quality": "low_quality", "preview": True}):
-        scene = LinearLayerDerivation()
-        scene.render()
+  with tempconfig(cfg):
+      FFBackwardPass().render()
+
+  with tempconfig(cfg):
+      LinearLayerDerivation().render()
